@@ -1,0 +1,17 @@
+SOUND1:				; label used to call the subroutine
+		mov R3, #0xF2
+		mov R4, #0x3D
+		acall stall	; this calls a second (nested) subroutine
+	ret			; return to previous program location
+
+stall:
+	loop0:
+		mov R1, #85		; The values entered into R1
+	loop1:				; and R2 control the tempo of the
+		mov R2, #255		; song.  Smaller values make the 
+	loop2:				; song play faster.
+		nop
+		djnz R2, loop2
+		djnz R1, loop1
+		djnz R0, loop0
+		ret
