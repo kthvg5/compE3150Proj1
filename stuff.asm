@@ -4,10 +4,11 @@ cseg at 0
 	mov P2M1,#0 				; set Port 2 to bi-directional
  	mov P1M1,#0 				; set Port 1 to bi-directional
  	mov P0M1,#0 				; set Port 0 to bi-directional
-	setb P2.0				   	;Clear Switch 1
+	setb P2.0				; Set Switch 1 to not pressed+
 
 NOT_PRESSED:	
 	jnb	p0.1, NOT_PRESSED			;Make sure it isn't held down
+	jnb	p2.3, NOT_PRESSED
 DELAY:							;100ms delay for input
 	MOV R0, 0x91
 DLOOP:	
@@ -18,12 +19,17 @@ DLOOP2:
 	acall WAIT_INPUT
 
 WAIT_INPUT:			
-	jnb P0.1, INCREMENT			;Check for Increment button, Sw1
-	;jb P0.1, DECREMENT			;Check for Decrement button, Sw2
+	jnb P0.1, INCREMENT			;Check for Increment button, Sw2
+	jnb P2.3, DECREMENT			;Check for Decrement button, Sw3
 	acall WAIT_INPUT			;will continue to loop here until Sw1 is pressed
 
 
-INCREMENT:						;Will increment by 1 0=ON and 1=OFF			
+INCREMENT:
+	;ACALL SOUND1					;for testing, remove
+;
+;
+
+							;Will increment by 1 0=ON and 1=OFF			
 	setb c 						;set carry to 1 which will be used to increment
 L1:								;All of these loops are used to increment
 	JC LED1
@@ -34,7 +40,7 @@ L3:
 L4:
 	JC LED4
 DONE:
-	acall NOT_PRESSED 					;jumps up to delay input
+	acall NOT_PRESSED 				;jumps up to delay input
 LED1: 
 	JB p2.4, LED1_ISOFF
 	JNB p2.4, LED1_ISON
@@ -77,12 +83,74 @@ LED4_ISON:
 	setb p0.5
 	setb p2.7
 	setb p0.6
+	;ACALL BEEP_UP
 	acall DONE
 LED4_ISOFF:
 	clr p0.6 					;Turning LED on
 	clr c		
 	acall DONE
+;						TESTING DEC FUNCTION!!!!
+DECREMENT:
+;	JNB p2.4 NOT_0 	;this chunk checks for the exception
+;	JNB p0.5 NOT_0 	;where we would be going from -1 to 0
+;	JNB p2.7 NOT_0	
+;	JNB p0.6 NOT_0
+;	JNB p0.4 NOT_0	;This port being 0 indicates negative
+;	CLR p2.4
+;	CLR p0.4
+;NOT_0:
+	JNB p2.4, D_L1ON
+	CLR p2.4		;p2.4 = 0, light is on
+	ACALL D_L2		;check light 2
+D_L1ON:
+	SETB p2.4
+	ACALL DONE		;ACALL DOWN_SOUND		; Play a sound when exiting
 
+D_L2:
+	JNB p0.5, D_L2ON
+	CLR p0.5		;p.05 = 0, light is on
+	ACALL D_L3		;check light 3
+D_L2ON:
+	SETB p0.5
+	ACALL DONE		;ACALL DOWN_SOUND		; Play a sound when exiting
+
+D_L3:
+	JNB p2.7, D_L3ON
+	CLR p2.7		;p2.7 = 0, light is on
+	ACALL D_L4		;check light 4
+D_L3ON:
+	SETB p2.7
+	ACALL DONE		;ACALL DOWN_SOUND		; Play a sound when exiting
+
+D_L4:
+	JNB p0.6, D_L4ON
+	CLR p0.6		;p0.6 = 0, light is on
+	ACALL DONE		;ACALL DOWN_SOUND		; Play a sound when exiting
+D_L4ON:
+	SETB p0.6
+	SETB p0.4		; Rollover always goes to 0
+	ACALL DONE		; ACALL DOWN_SOUND		; Play a sound when exiting
+
+
+
+
+;SOUND1:				; label used to call the subroutine
+	;	mov R3, #0xF2
+	;	mov R4, #0x3D
+;		acall stall	; this calls a second (nested) subroutine
+;	ret			; return to previous program location
+
+;stall:
+;	loop0:
+;		mov R1, #85		; The values entered into R1
+;	loop1:				; and R2 control the tempo of the
+;		mov R2, #255		; song.  Smaller values make the 
+;	loop2:				; song play faster.
+	;	nop
+	;	djnz R2, loop2
+	;	djnz R1, loop1
+	;	djnz R0, loop0
+	;	ret
 
 
 
