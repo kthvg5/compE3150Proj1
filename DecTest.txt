@@ -7,7 +7,7 @@ DECREMENT:
 ;	CLR p2.4
 ;	CLR p0.4
 ;NOT_0:
-	JNB p2.4 D_L1ON
+	JNB p2.4, D_L1ON
 	CLR p2.4		;p2.4 = 0, light is on
 	ACALL D_L2		;check light 2
 D_L1ON:
@@ -25,7 +25,7 @@ D_L2ON:
 D_L3:
 	JNB p2.7, D_L3ON
 	CLR p2.7		;p2.7 = 0, light is on
-	ACALL D_L2		;check light 4
+	ACALL D_L4		;check light 4
 D_L3ON:
 	SETB p2.7
 	ACALL DONE		;ACALL DOWN_SOUND		; Play a sound when exiting
