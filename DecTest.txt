@@ -1,0 +1,47 @@
+DEC:
+	JNB p2.4 NOT_0 	;this chunk checks for the exception
+	JNB p0.5 NOT_0 	;where we would be going from -1 to 0
+	JNB p2.7 NOT_0	
+	JNB p0.6 NOT_0
+	JNB p0.4 NOT_0	;This port being 0 indicates negative
+	CLR p2.4
+	CLR p0.4
+NOT_0:
+	JNB p2.4 D_L1ON
+	CLR p2.4		;p2.4 = 0, light is on
+	ACALL D_L2		;check light 2
+D_L1ON:
+	SETB p2.4
+	ACALL DONE		;ACALL DOWN_SOUND		; Play a sound when exiting
+
+D_L2:
+	JNB p0.5 D_L2ON
+	CLR p0.5		;p.05 = 0, light is on
+	ACALL D_L2		;check light 3
+D_L2ON:
+	SETB p0.5
+	ACALL DONE		;ACALL DOWN_SOUND		; Play a sound when exiting
+
+D_L3:
+	JNB p2.7 D_L2ON
+	CLR p2.7		;p2.7 = 0, light is on
+	ACALL D_L2		;check light 4
+D_L3ON:
+	SETB p2.7
+	ACALL DONE		;ACALL DOWN_SOUND		; Play a sound when exiting
+
+D_L4:
+	JNB p0.6 D_L2ON
+	CLR p0.6		;p0.6 = 0, light is on
+	ACALL DONE		;ACALL DOWN_SOUND		; Play a sound when exiting
+D_L4ON:
+	SETB p0.6
+	SETB p0.4		; Rollover always goes to 0
+	ACALL DONE		; ACALL DOWN_SOUND		; Play a sound when exiting
+
+also needs the following changes:
+
+JNB p2.3 NOT_PRESSED after "NOT_PRESSED: //	jnb	p0.1, NOT_PRESSED			;Make sure it isn't held down
+
+change ;jb P0.1, DECREMENT			;Check for Decrement button, Sw2
+	to jb p2.3, DECREMENT			;Check for Decrement button, Sw3
