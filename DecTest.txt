@@ -17,7 +17,7 @@ D_L1ON:
 D_L2:
 	JNB p0.5, D_L2ON
 	CLR p0.5		;p.05 = 0, light is on
-	ACALL D_L2		;check light 3
+	ACALL D_L3		;check light 3
 D_L2ON:
 	SETB p0.5
 	ACALL DONE		;ACALL DOWN_SOUND		; Play a sound when exiting
