@@ -4,7 +4,8 @@ cseg at 0
 	mov P2M1,#0 				; set Port 2 to bi-directional
  	mov P1M1,#0 				; set Port 1 to bi-directional
  	mov P0M1,#0 				; set Port 0 to bi-directional
-	setb P2.0				; Set Switch 1 to not pressed+
+	setb P2.0					; Set Switch 2 to not pressed
+	setb P2.3					; Set Switch 3 to not pressed
 
 NOT_PRESSED:	
 	jnb	p0.1, NOT_PRESSED			;Make sure it isn't held down
@@ -25,11 +26,18 @@ WAIT_INPUT:
 
 
 INCREMENT:
-	;ACALL SOUND1					;for testing, remove
-;
-;
+	JB p2.4, CHECK_NEG
+	JNB p0.5, CHECK_NEG
+ 	JNB p2.7, CHECK_NEG
+        JNB p0.6, CHECK_NEG
+	JB p0.4, INC_NEG
+	SETB p2.4
+	SETB p0.4
+	ACALL DONE
+CHECK_NEG:
+	JNB p0.4, DEC_NEG ;This port being 0 indicates negative
 
-							;Will increment by 1 0=ON and 1=OFF			
+INC_NEG:							;Will increment by 1 0=ON and 1=OFF			
 	setb c 						;set carry to 1 which will be used to increment
 L1:								;All of these loops are used to increment
 	JC LED1
@@ -39,7 +47,7 @@ L3:
 	JC LED3
 L4:
 	JC LED4
-DONE:
+DONE:	
 	acall NOT_PRESSED 				;jumps up to delay input
 LED1: 
 	JB p2.4, LED1_ISOFF
@@ -83,22 +91,25 @@ LED4_ISON:
 	setb p0.5
 	setb p2.7
 	setb p0.6
+	setb p0.4					;rollover always turns off negative light
 	;ACALL BEEP_UP
 	acall DONE
 LED4_ISOFF:
 	clr p0.6 					;Turning LED on
 	clr c		
 	acall DONE
-;						TESTING DEC FUNCTION!!!!
+
 DECREMENT:
-;	JNB p2.4 NOT_0 	;this chunk checks for the exception
-;	JNB p0.5 NOT_0 	;where we would be going from -1 to 0
-;	JNB p2.7 NOT_0	
-;	JNB p0.6 NOT_0
-;	JNB p0.4 NOT_0	;This port being 0 indicates negative
-;	CLR p2.4
-;	CLR p0.4
-;NOT_0:
+	JNB p0.4, INC_NEG   		;This port being 0 indicates negative
+DEC_NEG:
+ 	JNB p2.4, NOT_0 	;this chunk checks for the exception
+	JNB p0.5, NOT_0 	;where we would be going from 0 to -1
+	JNB p2.7, NOT_0	
+	JNB p0.6, NOT_0
+	CLR p2.4
+	CLR p0.4
+	ACALL DONE
+NOT_0:
 	JNB p2.4, D_L1ON
 	CLR p2.4		;p2.4 = 0, light is on
 	ACALL D_L2		;check light 2
@@ -128,7 +139,6 @@ D_L4:
 	ACALL DONE		;ACALL DOWN_SOUND		; Play a sound when exiting
 D_L4ON:
 	SETB p0.6
-	SETB p0.4		; Rollover always goes to 0
 	ACALL DONE		; ACALL DOWN_SOUND		; Play a sound when exiting
 
 
