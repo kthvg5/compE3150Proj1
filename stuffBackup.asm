@@ -6,7 +6,7 @@ cseg at 0
  	mov P0M1,#0 				; set Port 0 to bi-directional
 	setb P2.0					; Set Switch 2 to not pressed
 	setb P2.3					; Set Switch 3 to not pressed
-	mov TMOD, #0x01
+
 NOT_PRESSED:	
 	jnb	p0.1, NOT_PRESSED			;Make sure it isn't held down
 	jnb	p2.3, NOT_PRESSED
@@ -21,11 +21,11 @@ DLOOP2:
 
 WAIT_INPUT:			
 	jnb P0.1, INCREMENT			;Check for Increment button, Sw2
-	jnb P2.3, DECREMENT			;Check for Decrement button, Sw3		
+	jnb P2.3, DECREMENT			;Check for Decrement button, Sw3
 	acall WAIT_INPUT			;will continue to loop here until Sw1 is pressed
 
+
 INCREMENT:
-	ACALL SOUND_INC
 	JB p2.4, CHECK_NEG
 	JNB p0.5, CHECK_NEG
  	JNB p2.7, CHECK_NEG
@@ -33,9 +33,7 @@ INCREMENT:
 	JB p0.4, INC_NEG
 	SETB p2.4
 	SETB p0.4
-	ACALL DELAYDOT5S
-	ACALL SOUND_DEC
-	ACALL DONE			;check for from -1 to 0, beep beep noise
+	ACALL DONE
 CHECK_NEG:
 	JNB p0.4, DEC_NEG ;This port being 0 indicates negative
 
@@ -102,7 +100,6 @@ LED4_ISOFF:
 	acall DONE
 
 DECREMENT:
-	ACALL SOUND_DEC
 	JNB p0.4, INC_NEG   		;This port being 0 indicates negative
 DEC_NEG:
  	JNB p2.4, NOT_0 	;this chunk checks for the exception
@@ -111,106 +108,60 @@ DEC_NEG:
 	JNB p0.6, NOT_0
 	CLR p2.4
 	CLR p0.4
-	ACALL DELAYDOT5S
-	ACALL SOUND_INC
-	ACALL DONE	;sepcial case, from 1 to 0, beep beep noise
+	ACALL DONE
 NOT_0:
 	JNB p2.4, D_L1ON
 	CLR p2.4		;p2.4 = 0, light is on
 	ACALL D_L2		;check light 2
 D_L1ON:
-	SETB p2.4	       
+	SETB p2.4
 	ACALL DONE		;ACALL DOWN_SOUND		; Play a sound when exiting
 
 D_L2:
 	JNB p0.5, D_L2ON
-	CLR p0.5		;p.05 = 0, light is on	       
+	CLR p0.5		;p.05 = 0, light is on
 	ACALL D_L3		;check light 3
 D_L2ON:
-	SETB p0.5	       
+	SETB p0.5
 	ACALL DONE		;ACALL DOWN_SOUND		; Play a sound when exiting
 
 D_L3:
 	JNB p2.7, D_L3ON
-	CLR p2.7		;p2.7 = 0, light is on	       
+	CLR p2.7		;p2.7 = 0, light is on
 	ACALL D_L4		;check light 4
 D_L3ON:
-	SETB p2.7	       
+	SETB p2.7
 	ACALL DONE		;ACALL DOWN_SOUND		; Play a sound when exiting
 
 D_L4:
 	JNB p0.6, D_L4ON
-	CLR p0.6		;p0.6 = 0, light is on	       
+	CLR p0.6		;p0.6 = 0, light is on
 	ACALL DONE		;ACALL DOWN_SOUND		; Play a sound when exiting
 D_L4ON:
-	SETB p0.6	       
+	SETB p0.6
 	ACALL DONE		; ACALL DOWN_SOUND		; Play a sound when exiting
 
-SOUND_INC: ;----------------------------------BEGIN SOUND CODE FOR 1 PARTICULAR FREQUENCY. DOCUMENTATION BELOW--------------------
-	MOV R7, #255 ;MAKES FOR A DECENT LENGTH BEEP
-	SINC_LOOP:
-	SETB p1.7
-	ACALL DELAY500HZ
-	CLR p1.7
-	ACALL DELAY500HZ
-	DJNZ R7, SINC_LOOP
-	RET
 
-DELAY500HZ:
-	CLR TF0
-	CLR TR0
-	MOV TL0,#0xCD ;MODIFY THESE FOR DIFFERENT FREQUENCIES, THERE IS A PROGRAM PACKAGED IN THE PROJECT FOLDER THAT CAN CALCULATE THESE FOR YOU :)
-	MOV TH0,#0xFE
-	SETB TR0
-	WAIT500: JNB TF0, WAIT500
-	CLR TR0
-	CLR TF0
-	;SETB p1.7 
-	RET
-;----------------------------------------END 1 FREQ. SOUND CODE--------------------------------------------------------------	
-SOUND_DEC:
-	MOV R7, #255
-	SDEC_LOOP:
-	SETB P1.7
-	ACALL DELAY250HZ
-	CLR P1.7
-	ACALL DELAY250HZ
-	DJNZ R7, SDEC_LOOP
-	RET
 
-DELAY250HZ:
-	CLR TF0
-	CLR TR0
-	MOV TL0,#0x33
-	MOV TH0,#0xFB
-	SETB TR0
-	WAIT250: JNB TF0, WAIT250
-	CLR TR0
-	CLR TF0
-	;SETB p1.7 
-	RET
 
-DELAYDOT5S:
-	MOV R7, #5
-	DELDOT5SINNER:
-	CLR TF0
-	CLR TR0
-	MOV TL0,#0xFE
-	MOV TH0,#0x0F
-	SETB TR0
-	WAIT5S: JNB TF0, WAIT5S
-	CLR TR0
-	CLR TF0
-	;SETB p1.7 
-	DJNZ R7, DELDOT5SINNER
-	RET
+;SOUND1:				; label used to call the subroutine
+	;	mov R3, #0xF2
+	;	mov R4, #0x3D
+;		acall stall	; this calls a second (nested) subroutine
+;	ret			; return to previous program location
 
-;REST:
-;        mov R0, #1
-;	mov R3, #0x00	; TIMER 0 re-load value is set to minimum
-;	mov R4, #0x00	; possible value.
-;	acall stall
-;	ret
+;stall:
+;	loop0:
+;		mov R1, #85		; The values entered into R1
+;	loop1:				; and R2 control the tempo of the
+;		mov R2, #255		; song.  Smaller values make the 
+;	loop2:				; song play faster.
+	;	nop
+	;	djnz R2, loop2
+	;	djnz R1, loop1
+	;	djnz R0, loop0
+	;	ret
+
 
 
 END
