@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  STUFF                                                                04/15/2016 21:53:59 PAGE     1
+A51 MACRO ASSEMBLER  STUFF                                                                04/17/2016 19:01:53 PAGE     1
 
 
 MACRO ASSEMBLER A51 V6.02
@@ -65,7 +65,7 @@ LOC  OBJ            LINE     SOURCE
   0083          +1    56     KB3         BIT     0x83
   0084          +1    57     KB4         BIT     0x84
   0085          +1    58     KB5         BIT     0x85
-A51 MACRO ASSEMBLER  STUFF                                                                04/15/2016 21:53:59 PAGE     2
+A51 MACRO ASSEMBLER  STUFF                                                                04/17/2016 19:01:53 PAGE     2
 
   0086          +1    59     KB6         BIT     0x86
   0087          +1    60     KB7         BIT     0x87
@@ -133,7 +133,7 @@ LOC  OBJ            LINE     SOURCE
   0089          +1   122     TMOD    DATA    0x89
   008A          +1   123     TL0         DATA        0x8A
   008C          +1   124     TH0         DATA        0x8C
-A51 MACRO ASSEMBLER  STUFF                                                                04/15/2016 21:53:59 PAGE     3
+A51 MACRO ASSEMBLER  STUFF                                                                04/17/2016 19:01:53 PAGE     3
 
   008B          +1   125     TL1         DATA        0x8B
   008D          +1   126     TH1         DATA        0x8D
@@ -201,7 +201,7 @@ LOC  OBJ            LINE     SOURCE
                 +1   188     ;******* Real Time Clock *******
   00D3          +1   189     RTCL    DATA    0xD3
   00D2          +1   190     RTCH    DATA    0xD2
-A51 MACRO ASSEMBLER  STUFF                                                                04/15/2016 21:53:59 PAGE     4
+A51 MACRO ASSEMBLER  STUFF                                                                04/17/2016 19:01:53 PAGE     4
 
   00D1          +1   191     RTCCON  DATA    0xD1
                 +1   192     ;******* Interrupts ************
@@ -267,169 +267,232 @@ LOC  OBJ            LINE     SOURCE
 0000 75A400          252             mov P2M1,#0                             ; set Port 2 to bi-directional
 0003 759100          253             mov P1M1,#0                             ; set Port 1 to bi-directional
 0006 758400          254             mov P0M1,#0                             ; set Port 0 to bi-directional
-0009 D2A0            255             setb P2.0                               ; Set Switch 1 to not pressed+
-                     256     
-A51 MACRO ASSEMBLER  STUFF                                                                04/15/2016 21:53:59 PAGE     5
+0009 D2A0            255             setb P2.0                                       ; Set Switch 2 to not pressed
+000B D2A3            256             setb P2.3                                       ; Set Switch 3 to not pressed
+A51 MACRO ASSEMBLER  STUFF                                                                04/17/2016 19:01:53 PAGE     5
 
-000B                 257     NOT_PRESSED:    
-000B 3081FD          258             jnb     p0.1, NOT_PRESSED                       ;Make sure it isn't held down
-000E 30A3FA          259             jnb     p2.3, NOT_PRESSED
-0011                 260     DELAY:                                                  ;100ms delay for input
-0011 A891            261             MOV R0, 0x91
-0013                 262     DLOOP:  
-0013 A9FF            263             MOV R1, 0xFF
-0015                 264     DLOOP2: 
-0015 D9FE            265             DJNZ R1, DLOOP2
-0017 D8FA            266             DJNZ R0, DLOOP
-0019 111B            267             acall WAIT_INPUT
-                     268     
-001B                 269     WAIT_INPUT:                     
-001B 308105          270             jnb P0.1, INCREMENT                     ;Check for Increment button, Sw2
-001E 30A351          271             jnb P2.3, DECREMENT                     ;Check for Decrement button, Sw3
-0021 111B            272             acall WAIT_INPUT                        ;will continue to loop here until Sw1 is pr
+000D 758901          257             mov TMOD, #0x01
+0010                 258     NOT_PRESSED:    
+0010 3081FD          259             jnb     p0.1, NOT_PRESSED                       ;Make sure it isn't held down
+0013 30A3FA          260             jnb     p2.3, NOT_PRESSED
+0016                 261     DELAY:                                                  ;100ms delay for input
+0016 A891            262             MOV R0, 0x91
+0018                 263     DLOOP:  
+0018 A9FF            264             MOV R1, 0xFF
+001A                 265     DLOOP2: 
+001A D9FE            266             DJNZ R1, DLOOP2
+001C D8FA            267             DJNZ R0, DLOOP
+001E 1120            268             acall WAIT_INPUT
+                     269     
+0020                 270     WAIT_INPUT:                     
+0020 308105          271             jnb P0.1, INCREMENT                     ;Check for Increment button, Sw2
+0023 30A371          272             jnb P2.3, DECREMENT                     ;Check for Decrement button, Sw3           
+                                  
+0026 1120            273             acall WAIT_INPUT                        ;will continue to loop here until Sw1 is pr
                              essed
-                     273     
                      274     
-0023                 275     INCREMENT:
-                     276             ;ACALL SOUND1                                   ;for testing, remove
-                     277     ;
-                     278     ;
-                     279     
-                     280                                                             ;Will increment by 1 0=ON and 1=OFF
-                                                  
-0023 D3              281             setb c                                          ;set carry to 1 which will be used 
+0028                 275     INCREMENT:
+0028 11DE            276             ACALL SOUND_INC
+002A 20A416          277             JB p2.4, CHECK_NEG
+002D 308513          278             JNB p0.5, CHECK_NEG
+0030 30A710          279             JNB p2.7, CHECK_NEG
+0033 30860D          280             JNB p0.6, CHECK_NEG
+0036 20840D          281             JB p0.4, INC_NEG
+0039 D2A4            282             SETB p2.4
+003B D284            283             SETB p0.4
+003D 3120            284             ACALL DELAYDOT5S
+003F 11FF            285             ACALL SOUND_DEC
+0041 114F            286             ACALL DONE                      ;check for from -1 to 0, beep beep noise
+0043                 287     CHECK_NEG:
+0043 308456          288             JNB p0.4, DEC_NEG ;This port being 0 indicates negative
+                     289     
+0046                 290     INC_NEG:                                                        ;Will increment by 1 0=ON a
+                             nd 1=OFF                     
+0046 D3              291             setb c                                          ;set carry to 1 which will be used 
                              to increment
-0024                 282     L1:                                                             ;All of these loops are use
+0047                 292     L1:                                                             ;All of these loops are use
                              d to increment
-0024 4008            283             JC LED1
-0026                 284     L2:
-0026 4015            285             JC LED2
-0028                 286     L3:
-0028 4022            287             JC LED3
-002A                 288     L4:
-002A 402F            289             JC LED4
-002C                 290     DONE:
-002C 110B            291             acall NOT_PRESSED                               ;jumps up to delay input
-002E                 292     LED1: 
-002E 20A407          293             JB p2.4, LED1_ISOFF
-0031 30A400          294             JNB p2.4, LED1_ISON
-0034                 295     LED1_ISON:
-0034 D2A4            296             setb p2.4                                       ;Turning LED off
-0036 1126            297             acall L2
-0038                 298     LED1_ISOFF:
-0038 C2A4            299             clr p2.4                                        ;Turning LED on
-003A C3              300             clr c                                   
-003B 1126            301             acall L2
-                     302     ;LED 2
-003D                 303     LED2: 
-003D 208507          304             JB p0.5, LED2_ISOFF
-0040 308500          305             JNB p0.5, LED2_ISON
-0043                 306     LED2_ISON:
-0043 D285            307             setb p0.5 
-0045 1128            308             acall L3                                        ;Turning LED off
-0047                 309     LED2_ISOFF:
-0047 C285            310             clr p0.5                                        ;Turning LED on
-0049 C3              311             clr c                                           
-004A 1128            312             acall L3
-                     313     ;LED 3
-004C                 314     LED3: 
-004C 20A707          315             JB p2.7, LED3_ISOFF
-004F 30A700          316             JNB p2.7, LED3_ISON
-0052                 317     LED3_ISON:
-0052 D2A7            318             setb p2.7
-A51 MACRO ASSEMBLER  STUFF                                                                04/15/2016 21:53:59 PAGE     6
+0047 4008            293             JC LED1
+0049                 294     L2:
+0049 4015            295             JC LED2
+004B                 296     L3:
+004B 4022            297             JC LED3
+004D                 298     L4:
+004D 402F            299             JC LED4
+004F                 300     DONE:   
+004F 1110            301             acall NOT_PRESSED                               ;jumps up to delay input
+0051                 302     LED1: 
+0051 20A407          303             JB p2.4, LED1_ISOFF
+0054 30A400          304             JNB p2.4, LED1_ISON
+0057                 305     LED1_ISON:
+0057 D2A4            306             setb p2.4                                       ;Turning LED off
+0059 1149            307             acall L2
+005B                 308     LED1_ISOFF:
+005B C2A4            309             clr p2.4                                        ;Turning LED on
+005D C3              310             clr c                                   
+005E 1149            311             acall L2
+                     312     ;LED 2
+0060                 313     LED2: 
+0060 208507          314             JB p0.5, LED2_ISOFF
+0063 308500          315             JNB p0.5, LED2_ISON
+0066                 316     LED2_ISON:
+0066 D285            317             setb p0.5 
+A51 MACRO ASSEMBLER  STUFF                                                                04/17/2016 19:01:53 PAGE     6
 
-0054 112A            319             acall L4                                        ;Turning LED off
-0056                 320     LED3_ISOFF:
-0056 C2A7            321             clr p2.7                                        ;Turning LED on
-0058 C3              322             clr c           
-0059 112A            323             acall L4
-                     324     ;LED 4
-005B                 325     LED4: 
-005B 20860F          326             JB p0.6, LED4_ISOFF
-005E 308600          327             JNB p0.6, LED4_ISON
-0061                 328     LED4_ISON:
-0061 D286            329             setb p0.6                                       ;Clears all the LED's because over 
+0068 114B            318             acall L3                                        ;Turning LED off
+006A                 319     LED2_ISOFF:
+006A C285            320             clr p0.5                                        ;Turning LED on
+006C C3              321             clr c                                           
+006D 114B            322             acall L3
+                     323     ;LED 3
+006F                 324     LED3: 
+006F 20A707          325             JB p2.7, LED3_ISOFF
+0072 30A700          326             JNB p2.7, LED3_ISON
+0075                 327     LED3_ISON:
+0075 D2A7            328             setb p2.7
+0077 114D            329             acall L4                                        ;Turning LED off
+0079                 330     LED3_ISOFF:
+0079 C2A7            331             clr p2.7                                        ;Turning LED on
+007B C3              332             clr c           
+007C 114D            333             acall L4
+                     334     ;LED 4
+007E                 335     LED4: 
+007E 208611          336             JB p0.6, LED4_ISOFF
+0081 308600          337             JNB p0.6, LED4_ISON
+0084                 338     LED4_ISON:
+0084 D286            339             setb p0.6                                       ;Clears all the LED's because over 
                              15
-0063 D2A4            330             setb p2.4                                       
-0065 D285            331             setb p0.5
-0067 D2A7            332             setb p2.7
-0069 D286            333             setb p0.6
-                     334             ;ACALL BEEP_UP
-006B 112C            335             acall DONE
-006D                 336     LED4_ISOFF:
-006D C286            337             clr p0.6                                        ;Turning LED on
-006F C3              338             clr c           
-0070 112C            339             acall DONE
-                     340     ;                                               TESTING DEC FUNCTION!!!!
-0072                 341     DECREMENT:
-                     342     ;       JNB p2.4 NOT_0  ;this chunk checks for the exception
-                     343     ;       JNB p0.5 NOT_0  ;where we would be going from -1 to 0
-                     344     ;       JNB p2.7 NOT_0  
-                     345     ;       JNB p0.6 NOT_0
-                     346     ;       JNB p0.4 NOT_0  ;This port being 0 indicates negative
-                     347     ;       CLR p2.4
-                     348     ;       CLR p0.4
-                     349     ;NOT_0:
-0072 30A404          350             JNB p2.4, D_L1ON
-0075 C2A4            351             CLR p2.4                ;p2.4 = 0, light is on
-0077 117D            352             ACALL D_L2              ;check light 2
-0079                 353     D_L1ON:
-0079 D2A4            354             SETB p2.4
-007B 112C            355             ACALL DONE              ;ACALL DOWN_SOUND               ; Play a sound when exiting
-                     356     
-007D                 357     D_L2:
-007D 308504          358             JNB p0.5, D_L2ON
-0080 C285            359             CLR p0.5                ;p.05 = 0, light is on
-0082 1188            360             ACALL D_L3              ;check light 3
-0084                 361     D_L2ON:
-0084 D285            362             SETB p0.5
-0086 112C            363             ACALL DONE              ;ACALL DOWN_SOUND               ; Play a sound when exiting
-                     364     
-0088                 365     D_L3:
-0088 30A704          366             JNB p2.7, D_L3ON
-008B C2A7            367             CLR p2.7                ;p2.7 = 0, light is on
-008D 1193            368             ACALL D_L4              ;check light 4
-008F                 369     D_L3ON:
-008F D2A7            370             SETB p2.7
-0091 112C            371             ACALL DONE              ;ACALL DOWN_SOUND               ; Play a sound when exiting
+0086 D2A4            340             setb p2.4                                       
+0088 D285            341             setb p0.5
+008A D2A7            342             setb p2.7
+008C D286            343             setb p0.6
+008E D284            344             setb p0.4                                       ;rollover always turns off negative
+                              light
+                     345             ;ACALL BEEP_UP
+0090 114F            346             acall DONE
+0092                 347     LED4_ISOFF:
+0092 C286            348             clr p0.6                                        ;Turning LED on
+0094 C3              349             clr c           
+0095 114F            350             acall DONE
+                     351     
+0097                 352     DECREMENT:
+0097 11FF            353             ACALL SOUND_DEC
+0099 3084AA          354             JNB p0.4, INC_NEG               ;This port being 0 indicates negative
+009C                 355     DEC_NEG:
+009C 30A413          356             JNB p2.4, NOT_0         ;this chunk checks for the exception
+009F 308510          357             JNB p0.5, NOT_0         ;where we would be going from 0 to -1
+00A2 30A70D          358             JNB p2.7, NOT_0 
+00A5 30860A          359             JNB p0.6, NOT_0
+00A8 C2A4            360             CLR p2.4
+00AA C284            361             CLR p0.4
+00AC 3120            362             ACALL DELAYDOT5S
+00AE 11DE            363             ACALL SOUND_INC
+00B0 114F            364             ACALL DONE      ;sepcial case, from 1 to 0, beep beep noise
+00B2                 365     NOT_0:
+00B2 30A404          366             JNB p2.4, D_L1ON
+00B5 C2A4            367             CLR p2.4                ;p2.4 = 0, light is on
+00B7 11BD            368             ACALL D_L2              ;check light 2
+00B9                 369     D_L1ON:
+00B9 D2A4            370             SETB p2.4              
+00BB 114F            371             ACALL DONE              ;ACALL DOWN_SOUND               ; Play a sound when exiting
                      372     
-0093                 373     D_L4:
-0093 308604          374             JNB p0.6, D_L4ON
-0096 C286            375             CLR p0.6                ;p0.6 = 0, light is on
-0098 112C            376             ACALL DONE              ;ACALL DOWN_SOUND               ; Play a sound when exiting
-009A                 377     D_L4ON:
-009A D286            378             SETB p0.6
-009C D284            379             SETB p0.4               ; Rollover always goes to 0
-009E 112C            380             ACALL DONE              ; ACALL DOWN_SOUND              ; Play a sound when exiting
-                     381     
-                     382     
-                     383     
-A51 MACRO ASSEMBLER  STUFF                                                                04/15/2016 21:53:59 PAGE     7
+00BD                 373     D_L2:
+00BD 308504          374             JNB p0.5, D_L2ON
+00C0 C285            375             CLR p0.5                ;p.05 = 0, light is on         
+00C2 11C8            376             ACALL D_L3              ;check light 3
+00C4                 377     D_L2ON:
+00C4 D285            378             SETB p0.5              
+00C6 114F            379             ACALL DONE              ;ACALL DOWN_SOUND               ; Play a sound when exiting
+                     380     
+00C8                 381     D_L3:
+A51 MACRO ASSEMBLER  STUFF                                                                04/17/2016 19:01:53 PAGE     7
 
-                     384     
-                     385     ;SOUND1:                                ; label used to call the subroutine
-                     386             ;       mov R3, #0xF2
-                     387             ;       mov R4, #0x3D
-                     388     ;               acall stall     ; this calls a second (nested) subroutine
-                     389     ;       ret                     ; return to previous program location
-                     390     
-                     391     ;stall:
-                     392     ;       loop0:
-                     393     ;               mov R1, #85             ; The values entered into R1
-                     394     ;       loop1:                          ; and R2 control the tempo of the
-                     395     ;               mov R2, #255            ; song.  Smaller values make the 
-                     396     ;       loop2:                          ; song play faster.
-                     397             ;       nop
-                     398             ;       djnz R2, loop2
-                     399             ;       djnz R1, loop1
-                     400             ;       djnz R0, loop0
-                     401             ;       ret
-                     402     
-                     403     
-                     404     
-                     405     END
-A51 MACRO ASSEMBLER  STUFF                                                                04/15/2016 21:53:59 PAGE     8
+00C8 30A704          382             JNB p2.7, D_L3ON
+00CB C2A7            383             CLR p2.7                ;p2.7 = 0, light is on         
+00CD 11D3            384             ACALL D_L4              ;check light 4
+00CF                 385     D_L3ON:
+00CF D2A7            386             SETB p2.7              
+00D1 114F            387             ACALL DONE              ;ACALL DOWN_SOUND               ; Play a sound when exiting
+                     388     
+00D3                 389     D_L4:
+00D3 308604          390             JNB p0.6, D_L4ON
+00D6 C286            391             CLR p0.6                ;p0.6 = 0, light is on         
+00D8 114F            392             ACALL DONE              ;ACALL DOWN_SOUND               ; Play a sound when exiting
+00DA                 393     D_L4ON:
+00DA D286            394             SETB p0.6              
+00DC 114F            395             ACALL DONE              ; ACALL DOWN_SOUND              ; Play a sound when exiting
+                     396     
+00DE                 397     SOUND_INC:
+00DE 7FFF            398             MOV R7, #255
+00E0                 399             SINC_LOOP:
+00E0 D297            400             SETB p1.7
+00E2 11EB            401             ACALL DELAY500HZ
+00E4 C297            402             CLR p1.7
+00E6 11EB            403             ACALL DELAY500HZ
+00E8 DFF6            404             DJNZ R7, SINC_LOOP
+00EA 22              405             RET
+                     406     
+00EB                 407     DELAY500HZ:
+00EB C28D            408             CLR TF0
+00ED C28C            409             CLR TR0
+00EF 758ACD          410             MOV TL0,#0xCD
+00F2 758CFE          411             MOV TH0,#0xFE
+00F5 D28C            412             SETB TR0
+00F7 308DFD          413             WAIT500: JNB TF0, WAIT500
+00FA C28C            414             CLR TR0
+00FC C28D            415             CLR TF0
+                     416             ;SETB p1.7 
+00FE 22              417             RET
+                     418             
+00FF                 419     SOUND_DEC:
+00FF 7FFF            420             MOV R7, #255
+0101                 421             SDEC_LOOP:
+0101 D297            422             SETB P1.7
+0103 310C            423             ACALL DELAY250HZ
+0105 C297            424             CLR P1.7
+0107 310C            425             ACALL DELAY250HZ
+0109 DFF6            426             DJNZ R7, SDEC_LOOP
+010B 22              427             RET
+                     428     
+010C                 429     DELAY250HZ:
+010C C28D            430             CLR TF0
+010E C28C            431             CLR TR0
+0110 758A33          432             MOV TL0,#0x33
+0113 758CFB          433             MOV TH0,#0xFB
+0116 D28C            434             SETB TR0
+0118 308DFD          435             WAIT250: JNB TF0, WAIT250
+011B C28C            436             CLR TR0
+011D C28D            437             CLR TF0
+                     438             ;SETB p1.7 
+011F 22              439             RET
+                     440     
+0120                 441     DELAYDOT5S:
+0120 7F05            442             MOV R7, #5
+0122                 443             DELDOT5SINNER:
+0122 C28D            444             CLR TF0
+0124 C28C            445             CLR TR0
+0126 758AFE          446             MOV TL0,#0xFE
+0129 758C0F          447             MOV TH0,#0x0F
+A51 MACRO ASSEMBLER  STUFF                                                                04/17/2016 19:01:53 PAGE     8
+
+012C D28C            448             SETB TR0
+012E 308DFD          449             WAIT5S: JNB TF0, WAIT5S
+0131 C28C            450             CLR TR0
+0133 C28D            451             CLR TF0
+                     452             ;SETB p1.7 
+0135 DFEB            453             DJNZ R7, DELDOT5SINNER
+0137 22              454             RET
+                     455     
+                     456     ;REST:
+                     457     ;        mov R0, #1
+                     458     ;       mov R3, #0x00   ; TIMER 0 re-load value is set to minimum
+                     459     ;       mov R4, #0x00   ; possible value.
+                     460     ;       acall stall
+                     461     ;       ret
+                     462     
+                     463     
+                     464     END
+A51 MACRO ASSEMBLER  STUFF                                                                04/17/2016 19:01:53 PAGE     9
 
 SYMBOL TABLE LISTING
 ------ ----- -------
@@ -451,6 +514,7 @@ CCCRA. . . . . . .  D ADDR   00EAH   A
 CCCRB. . . . . . .  D ADDR   00EBH   A   
 CCCRC. . . . . . .  D ADDR   00ECH   A   
 CCCRD. . . . . . .  D ADDR   00EDH   A   
+CHECK_NEG. . . . .  C ADDR   0043H   A   
 CIN1A. . . . . . .  B ADDR   0080H.4 A   
 CIN1B. . . . . . .  B ADDR   0080H.3 A   
 CIN2A. . . . . . .  B ADDR   0080H.2 A   
@@ -462,24 +526,29 @@ CMP2O. . . . . . .  B ADDR   0080H.0 A
 CMPREF . . . . . .  B ADDR   0080H.5 A   
 CRSEL. . . . . . .  B ADDR   00D8H.0 A   
 CY . . . . . . . .  B ADDR   00D0H.7 A   
-DECREMENT. . . . .  C ADDR   0072H   A   
+DECREMENT. . . . .  C ADDR   0097H   A   
+DEC_NEG. . . . . .  C ADDR   009CH   A   
 DEEADR . . . . . .  D ADDR   00F3H   A   
 DEECON . . . . . .  D ADDR   00F1H   A   
 DEEDAT . . . . . .  D ADDR   00F2H   A   
-DELAY. . . . . . .  C ADDR   0011H   A   
+DELAY. . . . . . .  C ADDR   0016H   A   
+DELAY250HZ . . . .  C ADDR   010CH   A   
+DELAY500HZ . . . .  C ADDR   00EBH   A   
+DELAYDOT5S . . . .  C ADDR   0120H   A   
+DELDOT5SINNER. . .  C ADDR   0122H   A   
 DIVM . . . . . . .  D ADDR   0095H   A   
-DLOOP. . . . . . .  C ADDR   0013H   A   
-DLOOP2 . . . . . .  C ADDR   0015H   A   
-DONE . . . . . . .  C ADDR   002CH   A   
+DLOOP. . . . . . .  C ADDR   0018H   A   
+DLOOP2 . . . . . .  C ADDR   001AH   A   
+DONE . . . . . . .  C ADDR   004FH   A   
 DPH. . . . . . . .  D ADDR   0083H   A   
 DPL. . . . . . . .  D ADDR   0082H   A   
-D_L1ON . . . . . .  C ADDR   0079H   A   
-D_L2 . . . . . . .  C ADDR   007DH   A   
-D_L2ON . . . . . .  C ADDR   0084H   A   
-D_L3 . . . . . . .  C ADDR   0088H   A   
-D_L3ON . . . . . .  C ADDR   008FH   A   
-D_L4 . . . . . . .  C ADDR   0093H   A   
-D_L4ON . . . . . .  C ADDR   009AH   A   
+D_L1ON . . . . . .  C ADDR   00B9H   A   
+D_L2 . . . . . . .  C ADDR   00BDH   A   
+D_L2ON . . . . . .  C ADDR   00C4H   A   
+D_L3 . . . . . . .  C ADDR   00C8H   A   
+D_L3ON . . . . . .  C ADDR   00CFH   A   
+D_L4 . . . . . . .  C ADDR   00D3H   A   
+D_L4ON . . . . . .  C ADDR   00DAH   A   
 EA . . . . . . . .  B ADDR   00A8H.7 A   
 EBO. . . . . . . .  B ADDR   00A8H.5 A   
 EC . . . . . . . .  B ADDR   00E8H.2 A   
@@ -491,14 +560,14 @@ ES . . . . . . . .  B ADDR   00A8H.4 A
 ESPI . . . . . . .  B ADDR   00E8H.3 A   
 ESR. . . . . . . .  B ADDR   00A8H.4 A   
 EST. . . . . . . .  B ADDR   00E8H.6 A   
+A51 MACRO ASSEMBLER  STUFF                                                                04/17/2016 19:01:53 PAGE    10
+
 ET0. . . . . . . .  B ADDR   00A8H.1 A   
 ET1. . . . . . . .  B ADDR   00A8H.3 A   
 EWDRT. . . . . . .  B ADDR   00A8H.6 A   
 EX0. . . . . . . .  B ADDR   00A8H.0 A   
 EX1. . . . . . . .  B ADDR   00A8H.2 A   
 F0 . . . . . . . .  B ADDR   00D0H.5 A   
-A51 MACRO ASSEMBLER  STUFF                                                                04/15/2016 21:53:59 PAGE     9
-
 F1 . . . . . . . .  B ADDR   00D0H.1 A   
 FE . . . . . . . .  B ADDR   0098H.7 A   
 HLTEN. . . . . . .  B ADDR   00C8H.5 A   
@@ -520,7 +589,8 @@ IE0. . . . . . . .  B ADDR   0088H.1 A
 IE1. . . . . . . .  B ADDR   0088H.3 A   
 IEN0 . . . . . . .  D ADDR   00A8H   A   
 IEN1 . . . . . . .  D ADDR   00E8H   A   
-INCREMENT. . . . .  C ADDR   0023H   A   
+INCREMENT. . . . .  C ADDR   0028H   A   
+INC_NEG. . . . . .  C ADDR   0046H   A   
 INT0 . . . . . . .  B ADDR   0090H.3 A   
 INT1 . . . . . . .  B ADDR   0090H.4 A   
 IP0. . . . . . . .  D ADDR   00B8H   A   
@@ -540,33 +610,34 @@ KB7. . . . . . . .  B ADDR   0080H.7 A
 KBCON. . . . . . .  D ADDR   0094H   A   
 KBMASK . . . . . .  D ADDR   0086H   A   
 KBPATN . . . . . .  D ADDR   0093H   A   
-L1 . . . . . . . .  C ADDR   0024H   A   
-L2 . . . . . . . .  C ADDR   0026H   A   
-L3 . . . . . . . .  C ADDR   0028H   A   
-L4 . . . . . . . .  C ADDR   002AH   A   
-LED1 . . . . . . .  C ADDR   002EH   A   
-LED1_ISOFF . . . .  C ADDR   0038H   A   
-LED1_ISON. . . . .  C ADDR   0034H   A   
-LED2 . . . . . . .  C ADDR   003DH   A   
-LED2_ISOFF . . . .  C ADDR   0047H   A   
-LED2_ISON. . . . .  C ADDR   0043H   A   
-LED3 . . . . . . .  C ADDR   004CH   A   
-LED3_ISOFF . . . .  C ADDR   0056H   A   
-LED3_ISON. . . . .  C ADDR   0052H   A   
-LED4 . . . . . . .  C ADDR   005BH   A   
-LED4_ISOFF . . . .  C ADDR   006DH   A   
-LED4_ISON. . . . .  C ADDR   0061H   A   
+L1 . . . . . . . .  C ADDR   0047H   A   
+L2 . . . . . . . .  C ADDR   0049H   A   
+L3 . . . . . . . .  C ADDR   004BH   A   
+L4 . . . . . . . .  C ADDR   004DH   A   
+LED1 . . . . . . .  C ADDR   0051H   A   
+LED1_ISOFF . . . .  C ADDR   005BH   A   
+LED1_ISON. . . . .  C ADDR   0057H   A   
+LED2 . . . . . . .  C ADDR   0060H   A   
+LED2_ISOFF . . . .  C ADDR   006AH   A   
+LED2_ISON. . . . .  C ADDR   0066H   A   
+LED3 . . . . . . .  C ADDR   006FH   A   
+LED3_ISOFF . . . .  C ADDR   0079H   A   
+LED3_ISON. . . . .  C ADDR   0075H   A   
+LED4 . . . . . . .  C ADDR   007EH   A   
+LED4_ISOFF . . . .  C ADDR   0092H   A   
+LED4_ISON. . . . .  C ADDR   0084H   A   
 MISO . . . . . . .  B ADDR   00A0H.3 A   
 MOSI . . . . . . .  B ADDR   00A0H.2 A   
-NOT_PRESSED. . . .  C ADDR   000BH   A   
+A51 MACRO ASSEMBLER  STUFF                                                                04/17/2016 19:01:53 PAGE    11
+
+NOT_0. . . . . . .  C ADDR   00B2H   A   
+NOT_PRESSED. . . .  C ADDR   0010H   A   
 OCA. . . . . . . .  B ADDR   00A0H.6 A   
 OCB. . . . . . . .  B ADDR   0090H.6 A   
 OCC. . . . . . . .  B ADDR   0090H.7 A   
 OCD. . . . . . . .  B ADDR   00A0H.1 A   
 OCRAH. . . . . . .  D ADDR   00EFH   A   
 OCRAL. . . . . . .  D ADDR   00EEH   A   
-A51 MACRO ASSEMBLER  STUFF                                                                04/15/2016 21:53:59 PAGE    10
-
 OCRBH. . . . . . .  D ADDR   00FBH   A   
 OCRBL. . . . . . .  D ADDR   00FAH   A   
 OCRCH. . . . . . .  D ADDR   00FDH   A   
@@ -624,17 +695,21 @@ SBUF . . . . . . .  D ADDR   0099H   A
 SCL. . . . . . . .  B ADDR   0090H.2 A   
 SCON . . . . . . .  D ADDR   0098H   A   
 SDA. . . . . . . .  B ADDR   0090H.3 A   
+SDEC_LOOP. . . . .  C ADDR   0101H   A   
+A51 MACRO ASSEMBLER  STUFF                                                                04/17/2016 19:01:53 PAGE    12
+
 SI . . . . . . . .  B ADDR   00D8H.3 A   
+SINC_LOOP. . . . .  C ADDR   00E0H   A   
 SM0. . . . . . . .  B ADDR   0098H.7 A   
 SM1. . . . . . . .  B ADDR   0098H.6 A   
 SM2. . . . . . . .  B ADDR   0098H.5 A   
+SOUND_DEC. . . . .  C ADDR   00FFH   A   
+SOUND_INC. . . . .  C ADDR   00DEH   A   
 SP . . . . . . . .  D ADDR   0081H   A   
 SPCTL. . . . . . .  D ADDR   00E2H   A   
 SPDAT. . . . . . .  D ADDR   00E3H   A   
 SPICLK . . . . . .  B ADDR   00A0H.5 A   
 SPSTAT . . . . . .  D ADDR   00E1H   A   
-A51 MACRO ASSEMBLER  STUFF                                                                04/15/2016 21:53:59 PAGE    11
-
 SS . . . . . . . .  B ADDR   00A0H.4 A   
 SSTAT. . . . . . .  D ADDR   00BAH   A   
 STA. . . . . . . .  B ADDR   00D8H.5 A   
@@ -670,7 +745,10 @@ TR0. . . . . . . .  B ADDR   0088H.4 A
 TR1. . . . . . . .  B ADDR   0088H.6 A   
 TRIM . . . . . . .  D ADDR   0096H   A   
 TXD. . . . . . . .  B ADDR   0090H.0 A   
-WAIT_INPUT . . . .  C ADDR   001BH   A   
+WAIT250. . . . . .  C ADDR   0118H   A   
+WAIT500. . . . . .  C ADDR   00F7H   A   
+WAIT5S . . . . . .  C ADDR   012EH   A   
+WAIT_INPUT . . . .  C ADDR   0020H   A   
 WDCON. . . . . . .  D ADDR   00A7H   A   
 WDL. . . . . . . .  D ADDR   00C1H   A   
 WFEED1 . . . . . .  D ADDR   00C2H   A   

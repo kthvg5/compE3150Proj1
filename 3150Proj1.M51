@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V4.02                                                        04/15/2016  21:53:59  PAGE 1
+BL51 BANKED LINKER/LOCATER V4.02                                                        04/17/2016  19:01:53  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V4.02, INVOKED BY:
@@ -19,7 +19,7 @@ LINK MAP OF MODULE:  3150Proj1 (STUFF)
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
 
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
-            CODE    0000H     00A0H     ABSOLUTE     
+            CODE    0000H     0138H     ABSOLUTE     
 
 
 
@@ -43,6 +43,7 @@ SYMBOL TABLE OF MODULE:  3150Proj1 (STUFF)
   D:00EBH         SYMBOL        CCCRB
   D:00ECH         SYMBOL        CCCRC
   D:00EDH         SYMBOL        CCCRD
+  C:0043H         SYMBOL        CHECK_NEG
   B:0080H.4       SYMBOL        CIN1A
   B:0080H.3       SYMBOL        CIN1B
   B:0080H.2       SYMBOL        CIN2A
@@ -54,27 +55,32 @@ SYMBOL TABLE OF MODULE:  3150Proj1 (STUFF)
   B:0080H.5       SYMBOL        CMPREF
   B:00D8H.0       SYMBOL        CRSEL
   B:00D0H.7       SYMBOL        CY
-  C:0072H         SYMBOL        DECREMENT
+  C:0097H         SYMBOL        DECREMENT
+  C:009CH         SYMBOL        DEC_NEG
   D:00F3H         SYMBOL        DEEADR
   D:00F1H         SYMBOL        DEECON
+BL51 BANKED LINKER/LOCATER V4.02                                                      04/17/2016  19:01:53  PAGE 2
+
+
   D:00F2H         SYMBOL        DEEDAT
-  C:0011H         SYMBOL        DELAY
-BL51 BANKED LINKER/LOCATER V4.02                                                      04/15/2016  21:53:59  PAGE 2
-
-
+  C:0016H         SYMBOL        DELAY
+  C:010CH         SYMBOL        DELAY250HZ
+  C:00EBH         SYMBOL        DELAY500HZ
+  C:0120H         SYMBOL        DELAYDOT5S
+  C:0122H         SYMBOL        DELDOT5SINNER
   D:0095H         SYMBOL        DIVM
-  C:0013H         SYMBOL        DLOOP
-  C:0015H         SYMBOL        DLOOP2
-  C:002CH         SYMBOL        DONE
+  C:0018H         SYMBOL        DLOOP
+  C:001AH         SYMBOL        DLOOP2
+  C:004FH         SYMBOL        DONE
   D:0083H         SYMBOL        DPH
   D:0082H         SYMBOL        DPL
-  C:0079H         SYMBOL        D_L1ON
-  C:007DH         SYMBOL        D_L2
-  C:0084H         SYMBOL        D_L2ON
-  C:0088H         SYMBOL        D_L3
-  C:008FH         SYMBOL        D_L3ON
-  C:0093H         SYMBOL        D_L4
-  C:009AH         SYMBOL        D_L4ON
+  C:00B9H         SYMBOL        D_L1ON
+  C:00BDH         SYMBOL        D_L2
+  C:00C4H         SYMBOL        D_L2ON
+  C:00C8H         SYMBOL        D_L3
+  C:00CFH         SYMBOL        D_L3ON
+  C:00D3H         SYMBOL        D_L4
+  C:00DAH         SYMBOL        D_L4ON
   B:00A8H.7       SYMBOL        EA
   B:00A8H.5       SYMBOL        EBO
   B:00E8H.2       SYMBOL        EC
@@ -113,15 +119,16 @@ SYMBOL TABLE OF MODULE:  3150Proj1 (STUFF)
   B:0088H.3       SYMBOL        IE1
   D:00A8H         SYMBOL        IEN0
   D:00E8H         SYMBOL        IEN1
-  C:0023H         SYMBOL        INCREMENT
+BL51 BANKED LINKER/LOCATER V4.02                                                      04/17/2016  19:01:53  PAGE 3
+
+
+  C:0028H         SYMBOL        INCREMENT
+  C:0046H         SYMBOL        INC_NEG
   B:0090H.3       SYMBOL        INT0
   B:0090H.4       SYMBOL        INT1
   D:00B8H         SYMBOL        IP0
   D:00B7H         SYMBOL        IP0H
   D:00F8H         SYMBOL        IP1
-BL51 BANKED LINKER/LOCATER V4.02                                                      04/15/2016  21:53:59  PAGE 3
-
-
   D:00F7H         SYMBOL        IP1H
   B:0088H.0       SYMBOL        IT0
   B:0088H.2       SYMBOL        IT1
@@ -136,25 +143,26 @@ SYMBOL TABLE OF MODULE:  3150Proj1 (STUFF)
   D:0094H         SYMBOL        KBCON
   D:0086H         SYMBOL        KBMASK
   D:0093H         SYMBOL        KBPATN
-  C:0024H         SYMBOL        L1
-  C:0026H         SYMBOL        L2
-  C:0028H         SYMBOL        L3
-  C:002AH         SYMBOL        L4
-  C:002EH         SYMBOL        LED1
-  C:0038H         SYMBOL        LED1_ISOFF
-  C:0034H         SYMBOL        LED1_ISON
-  C:003DH         SYMBOL        LED2
-  C:0047H         SYMBOL        LED2_ISOFF
-  C:0043H         SYMBOL        LED2_ISON
-  C:004CH         SYMBOL        LED3
-  C:0056H         SYMBOL        LED3_ISOFF
-  C:0052H         SYMBOL        LED3_ISON
-  C:005BH         SYMBOL        LED4
-  C:006DH         SYMBOL        LED4_ISOFF
-  C:0061H         SYMBOL        LED4_ISON
+  C:0047H         SYMBOL        L1
+  C:0049H         SYMBOL        L2
+  C:004BH         SYMBOL        L3
+  C:004DH         SYMBOL        L4
+  C:0051H         SYMBOL        LED1
+  C:005BH         SYMBOL        LED1_ISOFF
+  C:0057H         SYMBOL        LED1_ISON
+  C:0060H         SYMBOL        LED2
+  C:006AH         SYMBOL        LED2_ISOFF
+  C:0066H         SYMBOL        LED2_ISON
+  C:006FH         SYMBOL        LED3
+  C:0079H         SYMBOL        LED3_ISOFF
+  C:0075H         SYMBOL        LED3_ISON
+  C:007EH         SYMBOL        LED4
+  C:0092H         SYMBOL        LED4_ISOFF
+  C:0084H         SYMBOL        LED4_ISON
   B:00A0H.3       SYMBOL        MISO
   B:00A0H.2       SYMBOL        MOSI
-  C:000BH         SYMBOL        NOT_PRESSED
+  C:00B2H         SYMBOL        NOT_0
+  C:0010H         SYMBOL        NOT_PRESSED
   B:00A0H.6       SYMBOL        OCA
   B:0090H.6       SYMBOL        OCB
   B:0090H.7       SYMBOL        OCC
@@ -171,6 +179,9 @@ SYMBOL TABLE OF MODULE:  3150Proj1 (STUFF)
   B:00D0H.0       SYMBOL        P
   D:0080H         SYMBOL        P0
   D:0084H         SYMBOL        P0M1
+BL51 BANKED LINKER/LOCATER V4.02                                                      04/17/2016  19:01:53  PAGE 4
+
+
   D:0085H         SYMBOL        P0M2
   D:0090H         SYMBOL        P1
   D:0091H         SYMBOL        P1M1
@@ -179,9 +190,6 @@ SYMBOL TABLE OF MODULE:  3150Proj1 (STUFF)
   D:00A4H         SYMBOL        P2M1
   D:00A5H         SYMBOL        P2M2
   D:00B0H         SYMBOL        P3
-BL51 BANKED LINKER/LOCATER V4.02                                                      04/15/2016  21:53:59  PAGE 4
-
-
   D:00B1H         SYMBOL        P3M1
   D:00B2H         SYMBOL        P3M2
   B:00B8H.5       SYMBOL        PB0
@@ -221,12 +229,19 @@ SYMBOL TABLE OF MODULE:  3150Proj1 (STUFF)
   B:0090H.2       SYMBOL        SCL
   D:0098H         SYMBOL        SCON
   B:0090H.3       SYMBOL        SDA
+  C:0101H         SYMBOL        SDEC_LOOP
   B:00D8H.3       SYMBOL        SI
+  C:00E0H         SYMBOL        SINC_LOOP
   B:0098H.7       SYMBOL        SM0
   B:0098H.6       SYMBOL        SM1
   B:0098H.5       SYMBOL        SM2
+  C:00FFH         SYMBOL        SOUND_DEC
+  C:00DEH         SYMBOL        SOUND_INC
   D:0081H         SYMBOL        SP
   D:00E2H         SYMBOL        SPCTL
+BL51 BANKED LINKER/LOCATER V4.02                                                      04/17/2016  19:01:53  PAGE 5
+
+
   D:00E3H         SYMBOL        SPDAT
   B:00A0H.5       SYMBOL        SPICLK
   D:00E1H         SYMBOL        SPSTAT
@@ -239,9 +254,6 @@ SYMBOL TABLE OF MODULE:  3150Proj1 (STUFF)
   D:008FH         SYMBOL        TAMOD
   B:0098H.3       SYMBOL        TB8
   D:0088H         SYMBOL        TCON
-BL51 BANKED LINKER/LOCATER V4.02                                                      04/15/2016  21:53:59  PAGE 5
-
-
   D:00C8H         SYMBOL        TCR20
   D:00F9H         SYMBOL        TCR21
   B:00C8H.2       SYMBOL        TDIR2
@@ -268,7 +280,10 @@ SYMBOL TABLE OF MODULE:  3150Proj1 (STUFF)
   B:0088H.6       SYMBOL        TR1
   D:0096H         SYMBOL        TRIM
   B:0090H.0       SYMBOL        TXD
-  C:001BH         SYMBOL        WAIT_INPUT
+  C:0118H         SYMBOL        WAIT250
+  C:00F7H         SYMBOL        WAIT500
+  C:012EH         SYMBOL        WAIT5S
+  C:0020H         SYMBOL        WAIT_INPUT
   D:00A7H         SYMBOL        WDCON
   D:00C1H         SYMBOL        WDL
   D:00C2H         SYMBOL        WFEED1
@@ -279,78 +294,152 @@ SYMBOL TABLE OF MODULE:  3150Proj1 (STUFF)
   C:0003H         LINE#         5
   C:0006H         LINE#         6
   C:0009H         LINE#         7
-  C:000BH         LINE#         10
-  C:000EH         LINE#         11
-  C:0011H         LINE#         13
-  C:0013H         LINE#         15
-  C:0015H         LINE#         17
-  C:0017H         LINE#         18
-  C:0019H         LINE#         19
-  C:001BH         LINE#         22
-  C:001EH         LINE#         23
-  C:0021H         LINE#         24
-  C:0023H         LINE#         33
-  C:0024H         LINE#         35
-  C:0026H         LINE#         37
-  C:0028H         LINE#         39
-  C:002AH         LINE#         41
-  C:002CH         LINE#         43
-  C:002EH         LINE#         45
-  C:0031H         LINE#         46
-  C:0034H         LINE#         48
-  C:0036H         LINE#         49
-BL51 BANKED LINKER/LOCATER V4.02                                                      04/15/2016  21:53:59  PAGE 6
+  C:000BH         LINE#         8
+  C:000DH         LINE#         9
+  C:0010H         LINE#         11
+  C:0013H         LINE#         12
+  C:0016H         LINE#         14
+BL51 BANKED LINKER/LOCATER V4.02                                                      04/17/2016  19:01:53  PAGE 6
 
 
-  C:0038H         LINE#         51
-  C:003AH         LINE#         52
-  C:003BH         LINE#         53
-  C:003DH         LINE#         56
-  C:0040H         LINE#         57
-  C:0043H         LINE#         59
-  C:0045H         LINE#         60
-  C:0047H         LINE#         62
-  C:0049H         LINE#         63
-  C:004AH         LINE#         64
-  C:004CH         LINE#         67
-  C:004FH         LINE#         68
-  C:0052H         LINE#         70
-  C:0054H         LINE#         71
-  C:0056H         LINE#         73
-  C:0058H         LINE#         74
-  C:0059H         LINE#         75
-  C:005BH         LINE#         78
-  C:005EH         LINE#         79
-  C:0061H         LINE#         81
-  C:0063H         LINE#         82
-  C:0065H         LINE#         83
-  C:0067H         LINE#         84
-  C:0069H         LINE#         85
-  C:006BH         LINE#         87
-  C:006DH         LINE#         89
-  C:006FH         LINE#         90
-  C:0070H         LINE#         91
-  C:0072H         LINE#         102
-  C:0075H         LINE#         103
-  C:0077H         LINE#         104
-  C:0079H         LINE#         106
-  C:007BH         LINE#         107
-  C:007DH         LINE#         110
-  C:0080H         LINE#         111
-  C:0082H         LINE#         112
-  C:0084H         LINE#         114
-  C:0086H         LINE#         115
-  C:0088H         LINE#         118
-  C:008BH         LINE#         119
-  C:008DH         LINE#         120
-  C:008FH         LINE#         122
-  C:0091H         LINE#         123
-  C:0093H         LINE#         126
-  C:0096H         LINE#         127
-  C:0098H         LINE#         128
-  C:009AH         LINE#         130
-  C:009CH         LINE#         131
-  C:009EH         LINE#         132
+  C:0018H         LINE#         16
+  C:001AH         LINE#         18
+  C:001CH         LINE#         19
+  C:001EH         LINE#         20
+  C:0020H         LINE#         23
+  C:0023H         LINE#         24
+  C:0026H         LINE#         25
+  C:0028H         LINE#         28
+  C:002AH         LINE#         29
+  C:002DH         LINE#         30
+  C:0030H         LINE#         31
+  C:0033H         LINE#         32
+  C:0036H         LINE#         33
+  C:0039H         LINE#         34
+  C:003BH         LINE#         35
+  C:003DH         LINE#         36
+  C:003FH         LINE#         37
+  C:0041H         LINE#         38
+  C:0043H         LINE#         40
+  C:0046H         LINE#         43
+  C:0047H         LINE#         45
+  C:0049H         LINE#         47
+  C:004BH         LINE#         49
+  C:004DH         LINE#         51
+  C:004FH         LINE#         53
+  C:0051H         LINE#         55
+  C:0054H         LINE#         56
+  C:0057H         LINE#         58
+  C:0059H         LINE#         59
+  C:005BH         LINE#         61
+  C:005DH         LINE#         62
+  C:005EH         LINE#         63
+  C:0060H         LINE#         66
+  C:0063H         LINE#         67
+  C:0066H         LINE#         69
+  C:0068H         LINE#         70
+  C:006AH         LINE#         72
+  C:006CH         LINE#         73
+  C:006DH         LINE#         74
+  C:006FH         LINE#         77
+  C:0072H         LINE#         78
+  C:0075H         LINE#         80
+  C:0077H         LINE#         81
+  C:0079H         LINE#         83
+  C:007BH         LINE#         84
+  C:007CH         LINE#         85
+  C:007EH         LINE#         88
+  C:0081H         LINE#         89
+  C:0084H         LINE#         91
+  C:0086H         LINE#         92
+  C:0088H         LINE#         93
+  C:008AH         LINE#         94
+  C:008CH         LINE#         95
+  C:008EH         LINE#         96
+  C:0090H         LINE#         98
+  C:0092H         LINE#         100
+  C:0094H         LINE#         101
+BL51 BANKED LINKER/LOCATER V4.02                                                      04/17/2016  19:01:53  PAGE 7
+
+
+  C:0095H         LINE#         102
+  C:0097H         LINE#         105
+  C:0099H         LINE#         106
+  C:009CH         LINE#         108
+  C:009FH         LINE#         109
+  C:00A2H         LINE#         110
+  C:00A5H         LINE#         111
+  C:00A8H         LINE#         112
+  C:00AAH         LINE#         113
+  C:00ACH         LINE#         114
+  C:00AEH         LINE#         115
+  C:00B0H         LINE#         116
+  C:00B2H         LINE#         118
+  C:00B5H         LINE#         119
+  C:00B7H         LINE#         120
+  C:00B9H         LINE#         122
+  C:00BBH         LINE#         123
+  C:00BDH         LINE#         126
+  C:00C0H         LINE#         127
+  C:00C2H         LINE#         128
+  C:00C4H         LINE#         130
+  C:00C6H         LINE#         131
+  C:00C8H         LINE#         134
+  C:00CBH         LINE#         135
+  C:00CDH         LINE#         136
+  C:00CFH         LINE#         138
+  C:00D1H         LINE#         139
+  C:00D3H         LINE#         142
+  C:00D6H         LINE#         143
+  C:00D8H         LINE#         144
+  C:00DAH         LINE#         146
+  C:00DCH         LINE#         147
+  C:00DEH         LINE#         150
+  C:00E0H         LINE#         152
+  C:00E2H         LINE#         153
+  C:00E4H         LINE#         154
+  C:00E6H         LINE#         155
+  C:00E8H         LINE#         156
+  C:00EAH         LINE#         157
+  C:00EBH         LINE#         160
+  C:00EDH         LINE#         161
+  C:00EFH         LINE#         162
+  C:00F2H         LINE#         163
+  C:00F5H         LINE#         164
+  C:00F7H         LINE#         165
+  C:00FAH         LINE#         166
+  C:00FCH         LINE#         167
+  C:00FEH         LINE#         169
+  C:00FFH         LINE#         172
+  C:0101H         LINE#         174
+  C:0103H         LINE#         175
+  C:0105H         LINE#         176
+  C:0107H         LINE#         177
+  C:0109H         LINE#         178
+  C:010BH         LINE#         179
+  C:010CH         LINE#         182
+  C:010EH         LINE#         183
+BL51 BANKED LINKER/LOCATER V4.02                                                      04/17/2016  19:01:53  PAGE 8
+
+
+  C:0110H         LINE#         184
+  C:0113H         LINE#         185
+  C:0116H         LINE#         186
+  C:0118H         LINE#         187
+  C:011BH         LINE#         188
+  C:011DH         LINE#         189
+  C:011FH         LINE#         191
+  C:0120H         LINE#         194
+  C:0122H         LINE#         196
+  C:0124H         LINE#         197
+  C:0126H         LINE#         198
+  C:0129H         LINE#         199
+  C:012CH         LINE#         200
+  C:012EH         LINE#         201
+  C:0131H         LINE#         202
+  C:0133H         LINE#         203
+  C:0135H         LINE#         205
+  C:0137H         LINE#         206
   -------         ENDMOD        STUFF
 
 LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
