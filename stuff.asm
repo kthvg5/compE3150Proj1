@@ -95,6 +95,7 @@ LED4_ISON:
 	setb p0.6
 	setb p0.4					;rollover always turns off negative light
 	;ACALL BEEP_UP
+	acall TEST					;ZACH TEST
 	acall DONE
 LED4_ISOFF:
 	clr p0.6 					;Turning LED on
@@ -189,6 +190,28 @@ DELAY250HZ:
 	CLR TF0
 	;SETB p1.7 
 	RET
+
+TEST:
+	MOV R7, #255
+	TEST_LOOP:
+	SETB P1.7
+	ACALL DELAY_TEST
+	CLR P1.7
+	ACALL DELAY_TEST
+	DJNZ R7, TEST_LOOP
+	RET
+
+DELAY_TEST:
+	CLR TF0
+	CLR TR0
+	MOV TL0,#0x99
+	MOV TH0,#0xFB
+	SETB TR0
+	WAIT: JNB TF0, WAIT
+	CLR TR0
+	CLR TF0
+	RET
+
 
 DELAYDOT5S:
 	MOV R7, #5
